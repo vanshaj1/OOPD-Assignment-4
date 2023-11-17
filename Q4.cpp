@@ -50,7 +50,7 @@ class past_records_database{
     string getSourceofVoilation(string vno){
         int idx = findIdx(vno);
         if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
+            // cout<<"\nVehicle with this vehicle no doesn't exists";
             return "NA";
         }
         return this->Type_of_report[idx]; 
@@ -58,7 +58,7 @@ class past_records_database{
     string getLocationOfVoilation(string vno){
          int idx = findIdx(vno);
         if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
+            // cout<<"\nVehicle with this vehicle no doesn't exists";
             return "NA";
         }
         return this->Report_Location[idx];
@@ -85,7 +85,8 @@ class evidence{
         string responseOfPerson;
 
         friend ostream& operator<<(ostream& os,const evidence& e){
-            cout << " 1." << e.witnesses[0] <<" 2. "<<e.witnesses[1]<<" 3."<<e.witnesses[2] <<" "<<e.type_of_source<<" "<<e.report_Location<<" "<<e.responseOfPerson;
+            os << " 1." << e.witnesses[0] <<" 2. "<<e.witnesses[1]<<" 3."<<e.witnesses[2] <<" "<<e.type_of_source<<" "<<e.report_Location<<" "<<e.responseOfPerson;
+            return os;
         }
 };
 
@@ -100,7 +101,7 @@ class challeges_on_notices{
     }
 
     int findIdx(string Vno){
-        for(int i = 0;i < 500;i++){
+        for(int i = 0;i < vehicle_no.size();i++){
             if(vehicle_no[i] == Vno){
                 return i;
             }
@@ -109,19 +110,284 @@ class challeges_on_notices{
     } 
     void showDataBase(){
         for(int i = 0; i < vehicle_no.size();i++){
-            cout<<vehicle_no[i]<<" "<<complainant[i]<<" "<<evidences[i]<<" "<<"past records:- "<<pastRecords.getSourceofVoilation(vehicle_no[i])<<" "<<pastRecords.getLocationOfVoilation(vehicle_no[i]);
+            cout<<"\n"<<vehicle_no[i]<<" "<<complainant[i]<<" "<<evidences[i]<<" "<<"past records:- "<<pastRecords.getSourceofVoilation(vehicle_no[i])<<" "<<pastRecords.getLocationOfVoilation(vehicle_no[i]);
         }
     }
     void getEvidences(string vno){
         int idx = findIdx(vno);
+        if(idx == -1){
+            cout<<"\nRecord Not exists for this vehicle no";
+            return;
+        }
         cout<<evidences[idx];
     }
     void getComplianant(string vno){
         int idx = findIdx(vno);
+        if(idx == -1){
+            cout<<"\nRecord Not exists for this vehicle no";
+            return;
+        }
         cout<<complainant[idx];
     }
     void getPastRecords(string vno){
-        cout<<"Past records for this vehicle no "<<vno<<" is:- "<<pastRecords.getSourceofVoilation(vno)<<" "<<pastRecords.getLocationOfVoilation(vno);
+        cout<<"\nPast records for this vehicle no "<<vno<<" is:- "<<pastRecords.getSourceofVoilation(vno)<<" "<<pastRecords.getLocationOfVoilation(vno);
+    }
+    void changeVehicleNo(string vno,string newVno){
+        int idx = findIdx(vno);
+        if(idx == -1){
+            cout<<"\nDetails with this vehicle no does'nt exists in database";
+            return;
+        }
+        vehicle_no[idx] = newVno;
+        cout<<"\nVehicle no is update to "<<newVno<<" from "<<vno;
+    }
+    void changeEvidence(){
+       int ch = -1;
+       cout<<"\n0 - change report source\n1 - change report location\n2 - response of person\n3 - witness_1\n4 - witness_2\n5 - witness_3\n6 - Exit";
+       cout<<"\nenter your choice: ";
+       cin>>ch;
+       switch(ch){
+         case 0:{
+            string vno;
+            string type_of_source;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new Report Source";
+            cin>>type_of_source;
+            evidences[idx].type_of_source = type_of_source;
+            cout<<"\nReport source has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 1:{
+            string vno;
+            string report_location;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new Report Location";
+            cin>>report_location;
+            evidences[idx].report_Location = report_location;
+            cout<<"\nReport Location has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 2:{
+            string vno;
+            string response_of_person;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new response of the person";
+            cin.ignore();
+            getline(cin,response_of_person);
+            evidences[idx].responseOfPerson = response_of_person;
+            cout<<"\nResponse of person has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 3:{
+            string vno;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            string name,address,gender;
+            int age;
+            cout<<"\nEnter name of the new witness 1: ";
+            cin.ignore();
+            getline(cin,name);
+            cout<<"\nEnter address of the new witness 1: ";
+            cin.ignore();
+            getline(cin,address);
+            cout<<"\nEnter gender of the new witness 1: ";
+            cin.ignore();
+            getline(cin,gender);
+            cout<<"\nEnter age of the new witness 1: ";
+            cin>>age;
+            if(!name.empty()){
+                evidences[idx].witnesses[0].name = name;
+            }
+            if(!address.empty()){
+                evidences[idx].witnesses[0].address = address;
+            }
+            if(!gender.empty()){
+                evidences[idx].witnesses[0].gender = gender;
+            }
+            if(age > 0){
+                evidences[idx].witnesses[0].age = age;
+            }
+            cout<<"\nWitness 1 has been updated for vehicle no "<<vno;
+            break;
+         }
+         case 4:{
+            string vno;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            string name,address,gender;
+            int age;
+            cout<<"\nEnter name of the new witness 2: ";
+            cin.ignore();
+            getline(cin,name);
+            cout<<"\nEnter address of the new witness 2: ";
+            cin.ignore();
+            getline(cin,address);
+            cout<<"\nEnter gender of the new witness 2: ";
+            cin.ignore();
+            getline(cin,gender);
+            cout<<"\nEnter age of the new witness 2: ";
+            cin>>age;
+            if(!name.empty()){
+                evidences[idx].witnesses[1].name = name;
+            }
+            if(!address.empty()){
+                evidences[idx].witnesses[1].address = address;
+            }
+            if(!gender.empty()){
+                evidences[idx].witnesses[1].gender = gender;
+            }
+            if(age > 0){
+                evidences[idx].witnesses[1].age = age;
+            }
+            cout<<"\nWitness 2 has been updated for vehicle no "<<vno;
+            break;
+         }
+         case 5:{
+            string vno;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            string name,address,gender;
+            int age;
+            cout<<"\nEnter name of the new witness 3: ";
+            cin.ignore();
+            getline(cin,name);
+            cout<<"\nEnter address of the new witness 3: ";
+            cin.ignore();
+            getline(cin,address);
+            cout<<"\nEnter gender of the new witness 3: ";
+            cin.ignore();
+            getline(cin,gender);
+            cout<<"\nEnter age of the new witness 3: ";
+            cin>>age;
+            if(!name.empty()){
+                evidences[idx].witnesses[2].name = name;
+            }
+            if(!address.empty()){
+                evidences[idx].witnesses[2].address = address;
+            }
+            if(!gender.empty()){
+                evidences[idx].witnesses[2].gender = gender;
+            }
+            if(age > 0){
+                evidences[idx].witnesses[2].age = age;
+            }
+            cout<<"\nWitness 3 has been updated for vehicle no "<<vno;
+            break;
+         }
+         case 6:{
+            exit(1);
+         }
+       }
+    }
+    void changeComplainant(){
+       int ch = -1;
+       cout<<"\n0 - change name\n1 - change gender\n2 - change age\n3 - address\n4 - Exit";
+       cout<<"\nenter your choice: ";
+       cin>>ch;
+       switch(ch){
+         case 0:{
+            string vno;
+            string name;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new name : ";
+            cin.ignore();
+            getline(cin,name);
+            complainant[idx].name = name;
+            cout<<"\nComplaiant name has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 1:{
+            string vno;
+            string gender;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new gender : ";
+            cin>>gender;
+            complainant[idx].gender = gender;
+            cout<<"\nComplaiant gender has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 2:{
+            string vno;
+            int age;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new age of the person";
+            cin>>age;
+            complainant[idx].age = age;
+            cout<<"\nComplainant age has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 3:{
+            string vno;
+            string address;
+            cout<<"\nEnter vno: ";
+            cin>>vno;
+            int idx = findIdx(vno);
+            if(idx == -1){
+                cout<<"\nDetails with this vehicle no does'nt exists in database";
+                return;
+            }
+            cout<<"\nEnter new address of the person";
+            cin.ignore();
+            getline(cin,address);
+            complainant[idx].address = address;
+            cout<<"\nComplainant address has been changed for vehicle no "<<vno;
+            break;
+         }
+         case 6:{
+            exit(1);
+         }
+       }
     }
     void enterDetailsOfCase(string vno,string name,string gender,int age,string address,person witness1,person witness2,person witness3,string responseOfPerson,string Location,string source){
         vehicle_no.push_back(vno);
@@ -139,74 +405,128 @@ class challeges_on_notices{
         e.report_Location = Location;
         e.type_of_source = source;
         evidences.push_back(e);
+
+        cout<<"\nDetails are entered in the database";
     }
 };
 
 int main(){
     challeges_on_notices dataBase;
     dataBase.showDataBase();
-    // while(true){
-    //     cout<<"choose from the following option:-\n0 - show vehicles voilation's database\n1 - change Vehicle no\n2 - change source of report\n3 - change location of voilation\n4 - get details of voilation\n5 - get source of report\n6 - get location of voilation\n7 - exit\n";
-    //     cout<<"Enter your choice:- ";
-    //     int ch;
-    //     cin>>ch;
-    //     switch(ch){
-    //         case 0:{
-    //             identifier.showDataBase();
-    //             break;
-    //         }
-    //         case 1:{
-    //             string vno, new_vno;
-    //             cout<<"Enter Current Vehicle no: ";
-    //             cin>>vno;
-    //             cout<<"Enter New Vehcile no: ";
-    //             cin>>new_vno;
-    //             identifier.changeVehicleNo(vno,new_vno);
-    //             break;
-    //         }
-    //         case 2:{
-    //             string vno, source;
-    //             cout<<"Enter Vehicle no: ";
-    //             cin>>vno;
-    //             cout<<"Enter New Source of report: ";
-    //             cin>>source;
-    //             identifier.changeSource(vno,source);
-    //             break;
-    //         }
-    //         case 3:{
-    //             string vno, location;
-    //             cout<<"Enter Vehicle no: ";
-    //             cin>>vno;
-    //             cout<<"Enter New Location of report: ";
-    //             cin>>location;
-    //             identifier.changeLocation(vno,location);
-    //             break;
-    //         }
-    //         case 4:{
-    //             string vno;
-    //             cout<<"Enter Vehicle no: ";
-    //             cin>>vno;
-    //             identifier.getDetailsOfVoilation(vno);
-    //             break;
-    //         }
-    //         case 5:{
-    //             string vno;
-    //             cout<<"Enter Vehicle no: ";
-    //             cin>>vno;
-    //             identifier.getSourceofVoilation(vno);
-    //             break;
-    //         }
-    //         case 6:{
-    //             string vno;
-    //             cout<<"Enter Vehicle no: ";
-    //             cin>>vno;
-    //             identifier.getLocationOfVoilation(vno);
-    //             break;
-    //         }
-    //         case 7:{
-    //             exit(0);
-    //         }
-    //     }
-    // }
+    while(true){
+        cout<<"\nchoose from the following option:-\n0 - show challenges database\n1 - change Vehicle no\n2 - change Evidence info\n3 - change Complaiant info\n4 - Enter new challenge by a person\n5 - get past records\n6 - getComplaiant details\n7 - get evidence\n8 - exit\n";
+        cout<<"\nEnter your choice:- ";
+        int ch;
+        cin>>ch;
+        switch(ch){
+            case 0:{
+                dataBase.showDataBase();
+                break;
+            }
+            case 1:{
+                string vno, new_vno;
+                cout<<"\nEnter Current Vehicle no: ";
+                cin>>vno;
+                cout<<"\nEnter New Vehcile no: ";
+                cin>>new_vno;
+                dataBase.changeVehicleNo(vno,new_vno);
+                break;
+            }
+            case 2:{
+                dataBase.changeEvidence();
+                break;
+            }
+            case 3:{
+                dataBase.changeComplainant();
+                break;
+            }
+            case 4:{
+                string vno, name, gender,address,responseOfPerson, Location,source;
+                person witness1, witness2, witness3;
+                int age;
+
+                cout<<"Enter vehicle no: ";
+                cin>>vno;
+                cout<<"\nEnter name: ";
+                cin.ignore();
+                getline(cin,name);
+                cout<<"\nEnter gender: ";
+                cin>>gender;
+                cout<<"\nEnter address: ";
+                cin.ignore();
+                getline(cin,name);
+
+                cin.ignore();
+                cout<<"\nEnter response of the person: ";
+                getline(cin,responseOfPerson);
+
+                cout<<"\nEnter Location: ";
+                cin>>Location;
+
+                cout<<"\nEnter source: ";
+                cin>>source;
+
+                cout<<"\nEnter name of witness 1: ";
+                cin.ignore();
+                getline(cin,witness1.name);
+                cout<<"\nEnter gender of witness 1: ";
+                cin>>witness1.gender;
+                cout<<"\nEnter address of witness 1: ";
+                cin.ignore();
+                getline(cin,witness1.address);
+                cout<<"\nEnter age of witness 1: ";
+                cin>>witness1.age;
+
+                cout<<"\nEnter name of witness 2: ";
+                cin.ignore();
+                getline(cin,witness2.name);
+                cout<<"\nEnter gender of witness 2: ";
+                cin>>witness2.gender;
+                cout<<"\nEnter address of witness 2: ";
+                cin.ignore();
+                getline(cin,witness2.address);
+                cout<<"\nEnter age of witness 2: ";
+                cin>>witness2.age;
+
+                cout<<"\nEnter name of witness 3: ";
+                cin.ignore();
+                getline(cin,witness3.name);
+                cout<<"\nEnter gender of witness 3: ";
+                cin>>witness3.gender;
+                cout<<"\nEnter address of witness 3: ";
+                cin.ignore();
+                getline(cin,witness3.address);
+                cout<<"\nEnter age of witness 3: ";
+                cin>>witness3.age;
+
+                dataBase.enterDetailsOfCase(vno,name,gender,age,address,witness1,witness2,witness3,responseOfPerson,Location,source);
+                break;
+            }
+            case 5:{
+                string vno;
+                cout<<"\nEnter Vehicle no: ";
+                cin>>vno;
+                dataBase.getPastRecords(vno);
+                break;
+            }
+            case 6:{
+                string vno;
+                cout<<"\nEnter Vehicle no: ";
+                cin>>vno;
+                dataBase.getComplianant(vno);
+                break;
+            }
+            case 7:{
+                string vno;
+                cout<<"\nEnter Vehicle no: ";
+                cin>>vno;
+                dataBase.getEvidences(vno);
+                break;
+            }
+            case 8:{
+                exit(0);
+            }
+        }
+    }
     return 0;
 }
