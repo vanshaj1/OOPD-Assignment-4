@@ -38,30 +38,38 @@ class past_records_database{
         }
      }
 
-     int findIdx(string Vno){
+     vector<int> findIdx(string Vno){
+        vector<int> indices;
         for(int i = 0;i < 500;i++){
             if(Car_Number[i] == Vno){
-                return i;
+                indices.push_back(i);
             }
         }
-        return -1;
+        return indices;
      } 
 
-    string getSourceofVoilation(string vno){
-        int idx = findIdx(vno);
-        if(idx == -1){
-            // cout<<"\nVehicle with this vehicle no doesn't exists";
-            return "NA";
+    void getSourceofVoilation(string vno){
+        vector<int> indices = findIdx(vno);
+        cout<<"\nSource of voilation:- ";
+        if(indices.size() == 0){
+            cout<<"\nNA";
+            return;
         }
-        return this->Type_of_report[idx]; 
+        for(int i = 0;i<indices.size();i++){
+            cout<<"\n"<<this->Type_of_report[indices[i]];
+        }
     }
-    string getLocationOfVoilation(string vno){
-         int idx = findIdx(vno);
-        if(idx == -1){
+    void getLocationOfVoilation(string vno){
+        vector<int> indices = findIdx(vno);
+        cout<<"\nLocation of Voilation:- ";
+        if(indices.size() == 0){
             // cout<<"\nVehicle with this vehicle no doesn't exists";
-            return "NA";
+            cout<<"\nNA";
+            return;
         }
-        return this->Report_Location[idx];
+       for(int i = 0;i<indices.size();i++){
+            cout<<"\n"<<this->Report_Location[indices[i]];
+        }
     }
 };
 class person{
@@ -72,7 +80,7 @@ class person{
         string address;
 
         friend ostream& operator<<(ostream& os,const person& p){
-            os << p.name << " "<<p.gender<<" "<<p.age<<" "<<p.address;
+            os <<" name: "<<p.name <<" gender: "<<p.gender<<" age: "<<p.age<<" address: "<<p.address;
             return os;
         }
 };
@@ -85,7 +93,7 @@ class evidence{
         string responseOfPerson;
 
         friend ostream& operator<<(ostream& os,const evidence& e){
-            os << " 1." << e.witnesses[0] <<" 2. "<<e.witnesses[1]<<" 3."<<e.witnesses[2] <<" "<<e.type_of_source<<" "<<e.report_Location<<" "<<e.responseOfPerson;
+            os << " \n1." << e.witnesses[0] <<" \n2. "<<e.witnesses[1]<<" \n3."<<e.witnesses[2] <<" \nType of source:- "<<e.type_of_source<<" \nLocation of report:- "<<e.report_Location<<" \nResponse from person:- "<<e.responseOfPerson;
             return os;
         }
 };
@@ -110,7 +118,9 @@ class challeges_on_notices{
     } 
     void showDataBase(){
         for(int i = 0; i < vehicle_no.size();i++){
-            cout<<"\n"<<vehicle_no[i]<<" "<<complainant[i]<<" "<<evidences[i]<<" "<<"past records:- "<<pastRecords.getSourceofVoilation(vehicle_no[i])<<" "<<pastRecords.getLocationOfVoilation(vehicle_no[i]);
+            cout<<"\nVehicle no:- "<<vehicle_no[i]<<" "<<"\nComplainant info:- "<<complainant[i]<<"\nEvidence info:- "<<evidences[i]<<" "<<"\npast records:- ";
+            pastRecords.getSourceofVoilation(vehicle_no[i]);
+            pastRecords.getLocationOfVoilation(vehicle_no[i]);
         }
     }
     void getEvidences(string vno){
@@ -130,7 +140,9 @@ class challeges_on_notices{
         cout<<complainant[idx];
     }
     void getPastRecords(string vno){
-        cout<<"\nPast records for this vehicle no "<<vno<<" is:- "<<pastRecords.getSourceofVoilation(vno)<<" "<<pastRecords.getLocationOfVoilation(vno);
+        cout<<"\nPast records for this vehicle no "<<vno<<" is:- ";
+        pastRecords.getSourceofVoilation(vno);
+        pastRecords.getLocationOfVoilation(vno);
     }
     void changeVehicleNo(string vno,string newVno){
         int idx = findIdx(vno);
@@ -454,7 +466,9 @@ int main(){
                 cin>>gender;
                 cout<<"\nEnter address: ";
                 cin.ignore();
-                getline(cin,name);
+                getline(cin,address);
+                cout<<"\nAge:- ";
+                cin>>age;
 
                 cin.ignore();
                 cout<<"\nEnter response of the person: ";
