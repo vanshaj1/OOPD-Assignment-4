@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
 class registered_Vehicles{
@@ -60,11 +61,17 @@ class registered_Vehicles{
 };
 
 
-class Voilation_Identifier{
+class probable_address_Identifier{
   public:
-     string Car_Number[500];
-     string Type_of_report[500];
-     string Report_Location[500];
+    string FirstName[500];
+    string LastName[500];
+    string gender[500];
+    string address[500];
+    int age[500];
+    registered_Vehicles registeredVehicleDb;
+    probable_address_Identifier(){
+       registeredVehicleDb.readFromCsv("A4-Q1.csv");
+    }
      void readFromCsv(string filename){
         string line;
         ifstream file(filename);
@@ -77,157 +84,122 @@ class Voilation_Identifier{
             string vehicleNo = "";
             while(getline(s,word,',')){
                 if(j == 1){
-                   vehicleNo += word;
+                    this->FirstName[i] = word;
                 }else if(j == 2){
-                   vehicleNo += word; 
-                   this->Car_Number[i] = vehicleNo.substr(1,vehicleNo.length()-2);
+                    this->LastName[i] = word;
                 }else if(j == 3){
-                   this->Type_of_report[i] = word;
+                    this->age[i] = stoi(word);
                 }else if(j == 4){
-                   this->Report_Location[i] = word.substr(1,word.length()-2);
+                    this->gender[i] = word;
+                }else if(j == 5){
+                    this->address[i] = word;
                 }
                 j++;
             }
             i++;
         }
      }
-
-     int findIdx(string Vno){
+     vector<int> findIdx(string FirstName,string LastName){
+        vector<int> indices;
         for(int i = 0;i < 500;i++){
-            if(Car_Number[i] == Vno){
-                return i;
+            if(this->FirstName[i] == FirstName && this->LastName[i] == LastName){
+                indices.push_back(i);
             }
         }
-        return -1;
-     } 
-
-    void changeVehicleNo(string vno,string new_vno){
-        int idx = findIdx(vno);
-        if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
-            exit(0);
+        return indices;
+     }  
+     void get_probable_address(string vno){
+        int idx = registeredVehicleDb.findIdx(vno);
+        string FirstName = registeredVehicleDb.FirstName[idx];
+        string LastName = registeredVehicleDb.LastName[idx];
+        vector<int> indices = this->findIdx(FirstName,LastName);
+        cout<<"\nProbable addresses is:- ";
+        for(int i = 0;i<indices.size();i++){
+            cout<<"\n"<<this->address[i];
         }
-        this->Car_Number[idx] = new_vno;
-        cout<<"Vehicle Number "<<vno<<" has been updated to "<<new_vno<<endl;
-        cout<<"Now the new entry is:- "<<this->Car_Number[idx]<<" "<<this->Type_of_report[idx]<<" "<<this->Report_Location[idx]<<endl;
-     }
-
-    void changeSource(string vno,string source){
-        int idx = findIdx(vno);
-        if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
-            exit(0);
-        }
-        this->Type_of_report[idx] = source;
-        cout<<"Type of report has been updated for vehicle no "<<vno<<endl;
-        cout<<"Now the new entry is:- "<<this->Car_Number[idx]<<" "<<this->Type_of_report[idx]<<" "<<this->Report_Location[idx]<<endl;
-     }
-
-    void changeLocation(string vno,string Location){
-        int idx = findIdx(vno);
-        if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
-            exit(0);
-        }
-        this->Report_Location[idx] = Location;
-         cout<<"Report Location has been updated for vehicle no "<<vno<<endl;
-        cout<<"Now the new entry is:- "<<this->Car_Number[idx]<<" "<<this->Type_of_report[idx]<<" "<<this->Report_Location[idx]<<endl;
-     }
-
-    void getDetailsOfVoilation(string vno){
-        int idx = findIdx(vno);
-        if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
-            exit(0);
-        }
-        cout<<"Details of voilation is:- "<<this->Car_Number[idx]<<" "<<this->Type_of_report[idx]<<" "<<this->Report_Location[idx]<<endl;
     }
-    void getSourceofVoilation(string vno){
-        int idx = findIdx(vno);
-        if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
-            exit(0);
+     void changeEntry(string vno,string fname, string lname, string gender , string addr, int age){
+        int idx = registeredVehicleDb.findIdx(vno);
+        string FirstName = registeredVehicleDb.FirstName[idx];
+        string LastName = registeredVehicleDb.LastName[idx];
+        int Age = registeredVehicleDb.age[idx];
+        string Gender = registeredVehicleDb.gender[idx];
+        vector<int> indices = this->findIdx(FirstName,LastName);
+        for(int i = 0;i<500;i++){
+            if(this->FirstName[i] == FirstName && this->LastName[i] == LastName && this->gender[i] == Gender && this->age[i] == Age){
+                if(!fname.empty()){
+                    this->FirstName[i] = fname;
+                }
+                if(!lname.empty()){
+                    this->LastName[i] = lname;
+                }
+                if(!gender.empty()){
+                    this->gender[i] = gender;
+                }
+                if(!addr.empty()){
+                    this->address[i] = addr;
+                }
+                if(age > 0){
+                     this->age[i] = age;
+                }
+                cout<<"\nNow the new entry is:- "<<" First Name: "<<this->FirstName[i]<<" Last Name: "<<this->LastName[i]<<" Gender: "<<this->gender[i]<<" address: "<<this->address[i]<<" age: "<<this->age[i]<<endl;
+            }
         }
-        cout<<"Source of voilation for "<<vno<<" is:- "<<this->Type_of_report[idx]<<endl; 
-    }
-    void getLocationOfVoilation(string vno){
-         int idx = findIdx(vno);
-        if(idx == -1){
-            cout<<"Vehicle with this vehicle no doesn't exists";
-            exit(0);
-        }
-        cout<<"Location of voilation for "<<vno<<" is:- "<<this->Report_Location[idx]<<endl;
-    }
-    void showDataBase(){
+     }
+     void showDataBase(){
+        cout<<" | "<< "FirstName" <<" | "<< "LastName" <<" | "<< "age" <<" | "<< "gender" <<" | "<<"address"<<endl;
         for(int i = 0; i < 500;i++){
-            cout<<Car_Number[i]<<" "<< Type_of_report[i]<<" "<< Report_Location[i]<<endl;
+            cout<<" | "<< FirstName[i]<<" | "<< LastName[i]<<" | "<< age[i]<<" | "<< gender[i]<<" | "<< address[i]<<endl;
         }
      }
 };
 
 int main(){
-    Voilation_Identifier identifier;
-    identifier.readFromCsv("A4-Q2.csv");
-    identifier.showDataBase();
+    probable_address_Identifier probableDatabase;
+    probableDatabase.readFromCsv("A4-Q3.csv");
     while(true){
-        cout<<"choose from the following option:-\n0 - show vehicles voilation's database\n1 - change Vehicle no\n2 - change source of report\n3 - change location of voilation\n4 - get details of voilation\n5 - get source of report\n6 - get location of voilation\n7 - exit\n";
+        cout<<"\nchoose from the following option:-\n0 - show reference database\n1 - change Entry in database\n2 - get probable addresses\n3 - exit\n";
         cout<<"Enter your choice:- ";
         int ch;
         cin>>ch;
         switch(ch){
             case 0:{
-                identifier.showDataBase();
+                probableDatabase.showDataBase();
                 break;
             }
             case 1:{
-                string vno, new_vno;
-                cout<<"Enter Current Vehicle no: ";
+                string vno, fname,lname,address,gender;
+                int age;
+                cout<<"\nEnter Vehicle no: ";
                 cin>>vno;
-                cout<<"Enter New Vehcile no: ";
-                cin>>new_vno;
-                identifier.changeVehicleNo(vno,new_vno);
+                cin.ignore();
+                cout<<"\nEnter First name: ";
+                getline(cin,fname);
+                cin.ignore();
+                cout<<"\nEnter Last name: ";
+                getline(cin,lname);
+
+                cin.ignore();
+                cout<<"\nEnter gender: ";
+                getline(cin,gender);
+
+                cin.ignore();
+                cout<<"\nEnter address: ";
+                getline(cin,address);
+
+                cout<<"\nEnter age: ";
+                cin>>age;
+                probableDatabase.changeEntry(vno,fname,lname,gender,address,age);
                 break;
             }
             case 2:{
                 string vno, source;
-                cout<<"Enter Vehicle no: ";
+                cout<<"\nEnter Vehicle no: ";
                 cin>>vno;
-                cout<<"Enter New Source of report: ";
-                cin>>source;
-                identifier.changeSource(vno,source);
+                probableDatabase.get_probable_address(vno);
                 break;
             }
             case 3:{
-                string vno, location;
-                cout<<"Enter Vehicle no: ";
-                cin>>vno;
-                cout<<"Enter New Location of report: ";
-                cin>>location;
-                identifier.changeLocation(vno,location);
-                break;
-            }
-            case 4:{
-                string vno;
-                cout<<"Enter Vehicle no: ";
-                cin>>vno;
-                identifier.getDetailsOfVoilation(vno);
-                break;
-            }
-            case 5:{
-                string vno;
-                cout<<"Enter Vehicle no: ";
-                cin>>vno;
-                identifier.getSourceofVoilation(vno);
-                break;
-            }
-            case 6:{
-                string vno;
-                cout<<"Enter Vehicle no: ";
-                cin>>vno;
-                identifier.getLocationOfVoilation(vno);
-                break;
-            }
-            case 7:{
                 exit(0);
             }
         }
